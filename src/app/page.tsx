@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DatePickerField } from "@/components/date-picker-field";
 import { LeavePeriodInput } from "@/components/leave-period-input";
 import { ResultDisplay } from "@/components/result-display";
+import { FloatingBalloons } from "@/components/floating-balloons"; // Yeni bileşeni import et
 import {
   calculateNetServiceTime,
   calculateTotalLeaveDuration,
@@ -19,7 +20,6 @@ import { PlusCircle } from "lucide-react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
-import Confetti from 'react-confetti';
 
 export default function TimeSpanCalculatorPage() {
   const [employmentStartDate, setEmploymentStartDate] = useState<Date | undefined>();
@@ -29,26 +29,15 @@ export default function TimeSpanCalculatorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [uuid, setUuid] = useState<(() => string) | null>(null);
   const { toast } = useToast();
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [windowDimensions, setWindowDimensions] = useState<{ width: number | undefined; height: number | undefined }>({ width: undefined, height: undefined });
+  const [showBalloons, setShowBalloons] = useState(false); // Balon animasyonu için state
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const handleResize = () => {
-        setWindowDimensions({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      };
-      window.addEventListener('resize', handleResize);
-      handleResize(); 
-      
       if (window.crypto && window.crypto.randomUUID) {
         setUuid(() => window.crypto.randomUUID.bind(window.crypto));
       } else {
         setUuid(() => () => Date.now().toString(36) + Math.random().toString(36).substr(2));
       }
-      return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
@@ -108,10 +97,7 @@ export default function TimeSpanCalculatorPage() {
       return;
     }
 
-    setShowConfetti(true);
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 5000); 
+    setShowBalloons(true); // Balon animasyonunu başlat
 
     setIsLoading(true);
     setCalculatedServiceTime(null);
@@ -130,25 +116,8 @@ export default function TimeSpanCalculatorPage() {
 
   return (
     <main className="flex-grow container mx-auto px-4 py-8 max-w-3xl">
-      {showConfetti && windowDimensions.width && windowDimensions.height && (
-        <Confetti
-          width={windowDimensions.width}
-          height={windowDimensions.height}
-          recycle={false}
-          numberOfPieces={150}
-          colors={['hsl(209, 100%, 28%)', 'hsl(45, 100%, 50%)', '#FFFFFF']}
-          confettiSource={{
-            x: windowDimensions.width / 2,
-            y: windowDimensions.height / 2,
-            w: 0,
-            h: 0,
-          }}
-          gravity={0.15}
-          initialVelocityX={{ min: -10, max: 10 }}
-          initialVelocityY={{ min: -15, max: -5 }}
-        />
-      )}
-      <Card className="shadow-2xl">
+      <FloatingBalloons show={showBalloons} onComplete={() => setShowBalloons(false)} />
+      <Card className="shadow-lg"> {/* Gölge azaltıldı */}
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
             Personel Hareketleri Şube Müdürlüğü
