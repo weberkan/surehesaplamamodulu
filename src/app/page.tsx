@@ -142,6 +142,9 @@ export default function TimeSpanCalculatorPage() {
             w: 0,
             h: 0,
           }}
+          gravity={0.4}
+          initialVelocityX={{ min: -20, max: 20 }}
+          initialVelocityY={{ min: -50, max: -20 }}
         />
       )}
       <Card className="shadow-2xl">
