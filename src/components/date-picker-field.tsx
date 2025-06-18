@@ -55,7 +55,6 @@ export function DatePickerField({
     const referenceDate = new Date();
     for (const fmt of DATE_FORMATS_TO_TRY) {
       try {
-        // Tüm ayrıştırma denemelerinde Türkçe yerel ayarını kullan
         const parsedDate = parse(value, fmt, referenceDate, { locale: tr });
         if (isValid(parsedDate)) {
           return parsedDate;
@@ -71,14 +70,12 @@ export function DatePickerField({
     const parsedValue = tryParseDate(inputValue);
     if (parsedValue) {
       onDateChange(parsedValue);
-      // inputValue, selectedDate prop'u değiştiğinde useEffect aracılığıyla güncellenecek
     } else {
-      // Ayrıştırma başarısız olursa, son geçerli seçili tarihe geri dön veya temizle
       if (selectedDate) {
         setInputValue(format(selectedDate, "P", { locale: tr }));
       } else {
         setInputValue("");
-        onDateChange(undefined); // Ayrıştırma başarısız olursa ve önceki tarih yoksa açıkça temizle
+        onDateChange(undefined); 
       }
     }
   };
@@ -112,7 +109,7 @@ export function DatePickerField({
               aria-describedby={ariaDescribedBy}
               disabled={disabled}
               className={cn(
-                "w-full justify-start text-left font-normal h-10 pr-10", // Simge alanı için pr-10 eklendi
+                "w-full justify-start text-left font-normal h-10 pr-10", 
                  !selectedDate && !inputValue && "text-muted-foreground"
               )}
             />
@@ -133,7 +130,7 @@ export function DatePickerField({
             mode="single"
             selected={selectedDate}
             onSelect={handleCalendarSelect}
-            initialFocus={isOpen || !selectedDate} // Takvim açıksa veya tarih seçili değilse takvime odaklan
+            initialFocus={false} 
             disabled={disabled}
             locale={tr}
           />
