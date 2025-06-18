@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
+        body: ['Poppins', 'sans-serif'], // Updated body font to Poppins
         headline: ['Poppins', 'sans-serif'],
         code: ['monospace'],
       },

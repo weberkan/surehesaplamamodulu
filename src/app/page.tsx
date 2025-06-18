@@ -41,7 +41,7 @@ export default function TimeSpanCalculatorPage() {
         });
       };
       window.addEventListener('resize', handleResize);
-      handleResize(); // Initial size
+      handleResize(); 
       
       if (window.crypto && window.crypto.randomUUID) {
         setUuid(() => window.crypto.randomUUID.bind(window.crypto));
@@ -108,17 +108,15 @@ export default function TimeSpanCalculatorPage() {
       return;
     }
 
-    // Show confetti immediately if inputs are valid
     setShowConfetti(true);
     setTimeout(() => {
       setShowConfetti(false);
-    }, 5000); // Konfeti 5 saniye sürer
+    }, 5000); 
 
     setIsLoading(true);
     setCalculatedServiceTime(null);
     setTotalLeaveDuration(null);
 
-    // Artificial delay for calculation feedback
     setTimeout(() => {
       const result = calculateNetServiceTime(employmentStartDate!, leavePeriods);
       setCalculatedServiceTime(result);
@@ -127,7 +125,6 @@ export default function TimeSpanCalculatorPage() {
       setTotalLeaveDuration(totalLeaves);
 
       setIsLoading(false);
-      // Confetti is already handled above, no need to set it here again based on result
     }, 500);
   };
 
@@ -139,14 +136,20 @@ export default function TimeSpanCalculatorPage() {
           height={windowDimensions.height}
           recycle={false}
           numberOfPieces={200}
+          confettiSource={{
+            x: windowDimensions.width / 2,
+            y: windowDimensions.height / 2,
+            w: 0,
+            h: 0,
+          }}
         />
       )}
       <Card className="shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
-            Süre Hesaplayıcı
+            Personel Hareketleri Şube Müdürlüğü
           </CardTitle>
-          <CardDescription className="text-md text-muted-foreground pt-2">
+          <CardDescription className="text-sm text-muted-foreground pt-2">
             {format(FIXED_TARGET_DATE, "PPP", { locale: tr })} tarihine kadar hizmet süresini hesaplayın.
           </CardDescription>
         </CardHeader>
@@ -214,7 +217,7 @@ export default function TimeSpanCalculatorPage() {
         </CardContent>
       </Card>
       <footer className="text-center mt-12 text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} Süre Hesaplayıcı. Tüm hakları saklıdır.</p>
+        <p>&copy; {new Date().getFullYear()} Personel Hareketleri Şube Müdürlüğü. Tüm hakları saklıdır.</p>
       </footer>
     </main>
   );
