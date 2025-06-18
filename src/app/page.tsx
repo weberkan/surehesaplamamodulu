@@ -8,34 +8,50 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DatePickerField } from "@/components/date-picker-field";
 import { LeavePeriodInput } from "@/components/leave-period-input";
 import { ResultDisplay } from "@/components/result-display";
-import { 
-  calculateNetServiceTime, 
-  calculateTotalLeaveDuration, // Yeni fonksiyonu import et
-  FIXED_TARGET_DATE, 
-  type LeavePeriodData, 
-  type ServiceTime 
+import {
+  calculateNetServiceTime,
+  calculateTotalLeaveDuration,
+  FIXED_TARGET_DATE,
+  type LeavePeriodData,
+  type ServiceTime
 } from "@/lib/time-calculation";
 import { PlusCircle } from "lucide-react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import Confetti from 'react-confetti';
 
 export default function TimeSpanCalculatorPage() {
   const [employmentStartDate, setEmploymentStartDate] = useState<Date | undefined>();
   const [leavePeriods, setLeavePeriods] = useState<LeavePeriodData[]>([]);
   const [calculatedServiceTime, setCalculatedServiceTime] = useState<ServiceTime | null>(null);
-  const [totalLeaveDuration, setTotalLeaveDuration] = useState<ServiceTime | null>(null); // Yeni state
+  const [totalLeaveDuration, setTotalLeaveDuration] = useState<ServiceTime | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [uuid, setUuid] = useState<(() => string) | null>(null);
   const { toast } = useToast();
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowDimensions, setWindowDimensions] = useState<{ width: number | undefined; height: number | undefined }>({ width: undefined, height: undefined });
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
-      setUuid(() => window.crypto.randomUUID.bind(window.crypto));
-    } else {
-      setUuid(() => () => Date.now().toString(36) + Math.random().toString(36).substr(2));
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setWindowDimensions({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      };
+      window.addEventListener('resize', handleResize);
+      handleResize(); // Initial size
+      
+      if (window.crypto && window.crypto.randomUUID) {
+        setUuid(() => window.crypto.randomUUID.bind(window.crypto));
+      } else {
+        setUuid(() => () => Date.now().toString(36) + Math.random().toString(36).substr(2));
+      }
+      return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
+
 
   const handleAddLeavePeriod = () => {
     if (!uuid) return;
@@ -88,16 +104,15 @@ export default function TimeSpanCalculatorPage() {
   const handleCalculate = () => {
     if (!validateInputs()) {
       setCalculatedServiceTime(null);
-      setTotalLeaveDuration(null); // Toplam izin süresini de sıfırla
+      setTotalLeaveDuration(null);
       return;
     }
 
     setIsLoading(true);
-    setCalculatedServiceTime(null); 
-    setTotalLeaveDuration(null); // Hesaplama öncesi sıfırla
+    setCalculatedServiceTime(null);
+    setTotalLeaveDuration(null);
 
     setTimeout(() => {
-      // employmentStartDate burada kesin tanımlı (validateInputs kontrolü sayesinde)
       const result = calculateNetServiceTime(employmentStartDate!, leavePeriods);
       setCalculatedServiceTime(result);
 
@@ -105,11 +120,25 @@ export default function TimeSpanCalculatorPage() {
       setTotalLeaveDuration(totalLeaves);
 
       setIsLoading(false);
+      if (result && (result.years > 0 || result.months > 0 || result.days > 0)) {
+        setShowConfetti(true);
+        setTimeout(() => {
+          setShowConfetti(false);
+        }, 5000); // Konfeti 5 saniye sürer
+      }
     }, 500);
   };
 
   return (
     <main className="flex-grow container mx-auto px-4 py-8 max-w-3xl">
+      {showConfetti && windowDimensions.width && windowDimensions.height && (
+        <Confetti
+          width={windowDimensions.width}
+          height={windowDimensions.height}
+          recycle={false}
+          numberOfPieces={200}
+        />
+      )}
       <Card className="shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
