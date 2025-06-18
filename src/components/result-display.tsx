@@ -47,19 +47,10 @@ export function ResultDisplay({ serviceTime, isLoading }: ResultDisplayProps) {
       <CardHeader>
         <CardTitle className="font-headline text-2xl text-primary">Hesaplanan Hizmet Süresi</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex justify-between items-center text-lg">
-          <span className="font-medium text-foreground/80">Yıl:</span>
-          <span className="font-headline text-primary font-semibold">{serviceTime.years}</span>
-        </div>
-        <div className="flex justify-between items-center text-lg">
-          <span className="font-medium text-foreground/80">Ay:</span>
-          <span className="font-headline text-primary font-semibold">{serviceTime.months}</span>
-        </div>
-        <div className="flex justify-between items-center text-lg">
-          <span className="font-medium text-foreground/80">Gün:</span>
-          <span className="font-headline text-primary font-semibold">{serviceTime.days}</span>
-        </div>
+      <CardContent className="pt-6 text-center">
+          <p className="text-xl font-headline text-primary font-semibold">
+            {`${serviceTime.years} Yıl, ${serviceTime.months} Ay, ${serviceTime.days} Gün`}
+          </p>
       </CardContent>
     </Card>
   );
