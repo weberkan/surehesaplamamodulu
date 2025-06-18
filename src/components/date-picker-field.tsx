@@ -55,19 +55,13 @@ export function DatePickerField({
     const referenceDate = new Date();
     for (const fmt of DATE_FORMATS_TO_TRY) {
       try {
-        let parsedDate;
-        // Locale-sensitive formats
-        if (fmt === "P" || fmt === "PP" || fmt === "PPP") {
-          parsedDate = parse(value, fmt, referenceDate, { locale: tr });
-        } else {
-          // Other common formats
-          parsedDate = parse(value, fmt, referenceDate);
-        }
+        // Tüm ayrıştırma denemelerinde Türkçe yerel ayarını kullan
+        const parsedDate = parse(value, fmt, referenceDate, { locale: tr });
         if (isValid(parsedDate)) {
           return parsedDate;
         }
       } catch (e) {
-        // Ignore parsing errors and try the next format
+        // Ayrıştırma hatalarını yoksay ve sonraki formatı dene
       }
     }
     return undefined;
@@ -77,14 +71,14 @@ export function DatePickerField({
     const parsedValue = tryParseDate(inputValue);
     if (parsedValue) {
       onDateChange(parsedValue);
-      // Value will be updated via useEffect when selectedDate prop changes
+      // inputValue, selectedDate prop'u değiştiğinde useEffect aracılığıyla güncellenecek
     } else {
-      // If parsing fails, revert to the last valid selected date or clear
+      // Ayrıştırma başarısız olursa, son geçerli seçili tarihe geri dön veya temizle
       if (selectedDate) {
         setInputValue(format(selectedDate, "P", { locale: tr }));
       } else {
         setInputValue("");
-        onDateChange(undefined); // Explicitly clear if parsing fails and no prior date
+        onDateChange(undefined); // Ayrıştırma başarısız olursa ve önceki tarih yoksa açıkça temizle
       }
     }
   };
@@ -118,7 +112,7 @@ export function DatePickerField({
               aria-describedby={ariaDescribedBy}
               disabled={disabled}
               className={cn(
-                "w-full justify-start text-left font-normal h-10 pr-10", // Added pr-10 for icon space
+                "w-full justify-start text-left font-normal h-10 pr-10", // Simge alanı için pr-10 eklendi
                  !selectedDate && !inputValue && "text-muted-foreground"
               )}
             />
@@ -139,7 +133,7 @@ export function DatePickerField({
             mode="single"
             selected={selectedDate}
             onSelect={handleCalendarSelect}
-            initialFocus={isOpen || !selectedDate} // Focus calendar if open or no date selected
+            initialFocus={isOpen || !selectedDate} // Takvim açıksa veya tarih seçili değilse takvime odaklan
             disabled={disabled}
             locale={tr}
           />
