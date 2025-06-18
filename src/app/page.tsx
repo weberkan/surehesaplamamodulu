@@ -8,7 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DatePickerField } from "@/components/date-picker-field";
 import { LeavePeriodInput } from "@/components/leave-period-input";
 import { ResultDisplay } from "@/components/result-display";
-import { calculateNetServiceTime, FIXED_TARGET_DATE, type LeavePeriodData, type ServiceTime } from "@/lib/time-calculation";
+import { 
+  calculateNetServiceTime, 
+  calculateTotalLeaveDuration, // Yeni fonksiyonu import et
+  FIXED_TARGET_DATE, 
+  type LeavePeriodData, 
+  type ServiceTime 
+} from "@/lib/time-calculation";
 import { PlusCircle } from "lucide-react";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
@@ -18,6 +24,7 @@ export default function TimeSpanCalculatorPage() {
   const [employmentStartDate, setEmploymentStartDate] = useState<Date | undefined>();
   const [leavePeriods, setLeavePeriods] = useState<LeavePeriodData[]>([]);
   const [calculatedServiceTime, setCalculatedServiceTime] = useState<ServiceTime | null>(null);
+  const [totalLeaveDuration, setTotalLeaveDuration] = useState<ServiceTime | null>(null); // Yeni state
   const [isLoading, setIsLoading] = useState(false);
   const [uuid, setUuid] = useState<(() => string) | null>(null);
   const { toast } = useToast();
@@ -81,15 +88,22 @@ export default function TimeSpanCalculatorPage() {
   const handleCalculate = () => {
     if (!validateInputs()) {
       setCalculatedServiceTime(null);
+      setTotalLeaveDuration(null); // Toplam izin süresini de sıfırla
       return;
     }
 
     setIsLoading(true);
     setCalculatedServiceTime(null); 
+    setTotalLeaveDuration(null); // Hesaplama öncesi sıfırla
 
     setTimeout(() => {
-      const result = calculateNetServiceTime(employmentStartDate, leavePeriods);
+      // employmentStartDate burada kesin tanımlı (validateInputs kontrolü sayesinde)
+      const result = calculateNetServiceTime(employmentStartDate!, leavePeriods);
       setCalculatedServiceTime(result);
+
+      const totalLeaves = calculateTotalLeaveDuration(leavePeriods);
+      setTotalLeaveDuration(totalLeaves);
+
       setIsLoading(false);
     }, 500);
   };
@@ -142,6 +156,14 @@ export default function TimeSpanCalculatorPage() {
                 />
               ))}
             </div>
+            {totalLeaveDuration && !isLoading && (
+              <div className="mt-6 pt-4 border-t border-border">
+                <h3 className="text-md font-semibold text-foreground mb-1">Toplam Kullanılan İzin Süresi:</h3>
+                <p className="text-lg text-primary font-medium">
+                  {`${totalLeaveDuration.years} Yıl, ${totalLeaveDuration.months} Ay, ${totalLeaveDuration.days} Gün`}
+                </p>
+              </div>
+            )}
           </section>
 
           <div className="pt-4">
