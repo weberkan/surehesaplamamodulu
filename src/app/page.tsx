@@ -108,10 +108,17 @@ export default function TimeSpanCalculatorPage() {
       return;
     }
 
+    // Show confetti immediately if inputs are valid
+    setShowConfetti(true);
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 5000); // Konfeti 5 saniye sürer
+
     setIsLoading(true);
     setCalculatedServiceTime(null);
     setTotalLeaveDuration(null);
 
+    // Artificial delay for calculation feedback
     setTimeout(() => {
       const result = calculateNetServiceTime(employmentStartDate!, leavePeriods);
       setCalculatedServiceTime(result);
@@ -120,12 +127,7 @@ export default function TimeSpanCalculatorPage() {
       setTotalLeaveDuration(totalLeaves);
 
       setIsLoading(false);
-      if (result && (result.years > 0 || result.months > 0 || result.days > 0)) {
-        setShowConfetti(true);
-        setTimeout(() => {
-          setShowConfetti(false);
-        }, 5000); // Konfeti 5 saniye sürer
-      }
+      // Confetti is already handled above, no need to set it here again based on result
     }, 500);
   };
 
