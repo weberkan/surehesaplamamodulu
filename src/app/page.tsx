@@ -36,6 +36,7 @@ export default function TimeSpanCalculatorPage() {
       if (window.crypto && window.crypto.randomUUID) {
         setUuid(() => window.crypto.randomUUID.bind(window.crypto));
       } else {
+        // Fallback for environments without crypto.randomUUID (e.g., older browsers, http)
         setUuid(() => () => Date.now().toString(36) + Math.random().toString(36).substr(2));
       }
     }
@@ -103,6 +104,7 @@ export default function TimeSpanCalculatorPage() {
     setCalculatedServiceTime(null);
     setTotalLeaveDuration(null);
 
+    // Simulate calculation delay
     setTimeout(() => {
       const result = calculateNetServiceTime(employmentStartDate!, leavePeriods);
       setCalculatedServiceTime(result);
@@ -111,7 +113,7 @@ export default function TimeSpanCalculatorPage() {
       setTotalLeaveDuration(totalLeaves);
 
       setIsLoading(false);
-    }, 500);
+    }, 500); // Short delay for the loading state to be visible
   };
 
   return (
@@ -165,9 +167,11 @@ export default function TimeSpanCalculatorPage() {
             </div>
             {totalLeaveDuration && !isLoading && (
               <div className="mt-6 pt-4 border-t border-border">
-                <h3 className="text-md font-semibold text-foreground mb-1">Toplam Kullanılan İzin Süresi:</h3>
-                <p className="text-lg text-primary font-medium">
-                  {`${totalLeaveDuration.years} Yıl, ${totalLeaveDuration.months} Ay, ${totalLeaveDuration.days} Gün`}
+                <p className="text-md text-foreground">
+                  <span className="font-semibold">Toplam Kullanılan İzin Süresi:</span>
+                  <span className="text-primary font-medium ml-2">
+                    {`${totalLeaveDuration.years} Yıl, ${totalLeaveDuration.months} Ay, ${totalLeaveDuration.days} Gün`}
+                  </span>
                 </p>
               </div>
             )}
