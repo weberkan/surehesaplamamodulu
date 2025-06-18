@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DatePickerField } from "@/components/date-picker-field";
 import { LeavePeriodInput } from "@/components/leave-period-input";
 import { ResultDisplay } from "@/components/result-display";
-import { FloatingBalloons } from "@/components/floating-balloons"; // Yeni bileşeni import et
+import { FloatingBalloons } from "@/components/floating-balloons";
 import {
   calculateNetServiceTime,
   calculateTotalLeaveDuration,
@@ -29,7 +29,7 @@ export default function TimeSpanCalculatorPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [uuid, setUuid] = useState<(() => string) | null>(null);
   const { toast } = useToast();
-  const [showBalloons, setShowBalloons] = useState(false); // Balon animasyonu için state
+  const [showBalloons, setShowBalloons] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -97,7 +97,7 @@ export default function TimeSpanCalculatorPage() {
       return;
     }
 
-    setShowBalloons(true); // Balon animasyonunu başlat
+    setShowBalloons(true);
 
     setIsLoading(true);
     setCalculatedServiceTime(null);
@@ -117,7 +117,7 @@ export default function TimeSpanCalculatorPage() {
   return (
     <main className="flex-grow container mx-auto px-4 py-8 max-w-3xl">
       <FloatingBalloons show={showBalloons} onComplete={() => setShowBalloons(false)} />
-      <Card className="shadow-lg"> {/* Gölge azaltıldı */}
+      <Card className="shadow-lg">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
             Personel Hareketleri Şube Müdürlüğü

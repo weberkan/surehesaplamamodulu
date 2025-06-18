@@ -25,7 +25,7 @@ export function ResultDisplay({ serviceTime, isLoading }: ResultDisplayProps) {
     return (
       <Card className="w-full mt-8">
         <CardHeader>
-          <CardTitle className="font-headline text-xl text-primary">Hesaplanıyor...</CardTitle>
+          <CardTitle className="font-headline text-lg text-primary">Hesaplanıyor...</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -45,9 +45,9 @@ export function ResultDisplay({ serviceTime, isLoading }: ResultDisplayProps) {
   return (
     <Card className={`w-full mt-8 shadow-lg ${shouldAnimate ? 'animate-fade-in' : ''}`}>
       <CardHeader>
-        <CardTitle className="font-headline text-2xl text-primary">Hesaplanan Hizmet Süresi</CardTitle>
+        <CardTitle className="font-headline text-xl text-primary">Hesaplanan Hizmet Süresi</CardTitle>
       </CardHeader>
-      <CardContent className="pt-6 text-center">
+      <CardContent className="pt-2 text-center">
           <p className="text-xl font-headline text-primary font-semibold">
             {`${serviceTime.years} Yıl, ${serviceTime.months} Ay, ${serviceTime.days} Gün`}
           </p>
