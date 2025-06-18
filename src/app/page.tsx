@@ -135,16 +135,17 @@ export default function TimeSpanCalculatorPage() {
           width={windowDimensions.width}
           height={windowDimensions.height}
           recycle={false}
-          numberOfPieces={200}
+          numberOfPieces={150}
+          colors={['hsl(209, 100%, 28%)', 'hsl(45, 100%, 50%)', '#FFFFFF']}
           confettiSource={{
             x: windowDimensions.width / 2,
             y: windowDimensions.height / 2,
             w: 0,
             h: 0,
           }}
-          gravity={0.4}
-          initialVelocityX={{ min: -20, max: 20 }}
-          initialVelocityY={{ min: -50, max: -20 }}
+          gravity={0.15}
+          initialVelocityX={{ min: -10, max: 10 }}
+          initialVelocityY={{ min: -15, max: -5 }}
         />
       )}
       <Card className="shadow-2xl">

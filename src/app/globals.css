@@ -22,8 +22,8 @@
     --muted: 210 20% 90%; /* Lighter blue-gray e.g., #E0E6EB */
     --muted-foreground: 210 10% 45%; /* Medium blue-gray e.g., #6A737D */
 
-    --accent: 48 100% 50%; /* PTT Yellow e.g., #FECB00 */
-    --accent-foreground: 48 100% 15%; /* Dark brown/black for contrast on yellow e.g., #4D3D00 */
+    --accent: 45 100% 50%; /* PTT Yellow e.g., #FFC000 */
+    --accent-foreground: 45 100% 15%; /* Dark brown/black for contrast on yellow e.g., #4C3900 */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -36,9 +36,9 @@
 
     /* Chart colors */
     --chart-1: 209 80% 50%; /* Shades of PTT Blue */
-    --chart-2: 48 90% 55%;  /* Shades of PTT Yellow */
+    --chart-2: 45 90% 55%;  /* Shades of PTT Yellow */
     --chart-3: 209 60% 60%;
-    --chart-4: 48 70% 65%;
+    --chart-4: 45 70% 65%;
     --chart-5: 209 40% 70%;
 
     /* Sidebar specific colors */
@@ -71,8 +71,8 @@
     --muted: 210 15% 22%; /* Slightly darker cool gray e.g., #2F353D */
     --muted-foreground: 210 10% 60%; /* Medium-light gray/blue e.g., #8C97A4 */
 
-    --accent: 48 90% 60%; /* Slightly lighter PTT Yellow e.g., #FFD54F */
-    --accent-foreground: 48 100% 10%; /* Very dark brown/black */
+    --accent: 45 90% 60%; /* Slightly lighter PTT Yellow e.g., #FFCA4D */
+    --accent-foreground: 45 100% 10%; /* Very dark brown/black */
 
     --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 98%;
@@ -83,9 +83,9 @@
     
     /* Chart colors - dark theme variants */
     --chart-1: 209 70% 60%;
-    --chart-2: 48 80% 65%;
+    --chart-2: 45 80% 65%;
     --chart-3: 209 50% 70%;
-    --chart-4: 48 60% 75%;
+    --chart-4: 45 60% 75%;
     --chart-5: 209 30% 80%;
 
     /* Sidebar specific colors - dark theme variants */
