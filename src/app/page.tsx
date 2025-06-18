@@ -9,8 +9,9 @@ import { DatePickerField } from "@/components/date-picker-field";
 import { LeavePeriodInput } from "@/components/leave-period-input";
 import { ResultDisplay } from "@/components/result-display";
 import { calculateNetServiceTime, FIXED_TARGET_DATE, type LeavePeriodData, type ServiceTime } from "@/lib/time-calculation";
-import { PlusCircle, Info } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { format } from "date-fns";
+import { tr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TimeSpanCalculatorPage() {
@@ -22,17 +23,15 @@ export default function TimeSpanCalculatorPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Ensure crypto.randomUUID is available (client-side)
     if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
       setUuid(() => window.crypto.randomUUID.bind(window.crypto));
     } else {
-      // Fallback for environments without crypto.randomUUID (less robust)
       setUuid(() => () => Date.now().toString(36) + Math.random().toString(36).substr(2));
     }
   }, []);
 
   const handleAddLeavePeriod = () => {
-    if (!uuid) return; // Wait for UUID generator to be ready
+    if (!uuid) return;
     setLeavePeriods([...leavePeriods, { id: uuid(), startDate: undefined, endDate: undefined }]);
   };
 
@@ -51,8 +50,8 @@ export default function TimeSpanCalculatorPage() {
   const validateInputs = (): boolean => {
     if (!employmentStartDate) {
       toast({
-        title: "Validation Error",
-        description: "Please select an employment start date.",
+        title: "Doğrulama Hatası",
+        description: "Lütfen işe başlangıç tarihini seçin.",
         variant: "destructive",
       });
       return false;
@@ -61,16 +60,16 @@ export default function TimeSpanCalculatorPage() {
     for (const lp of leavePeriods) {
       if (lp.startDate && lp.endDate && lp.startDate > lp.endDate) {
         toast({
-          title: "Validation Error",
-          description: `Leave period end date cannot be before its start date.`,
+          title: "Doğrulama Hatası",
+          description: `İzin bitiş tarihi başlangıç tarihinden önce olamaz.`,
           variant: "destructive",
         });
         return false;
       }
       if ((lp.startDate && !lp.endDate) || (!lp.startDate && lp.endDate)) {
          toast({
-          title: "Validation Error",
-          description: `Please provide both start and end dates for all leave periods.`,
+          title: "Doğrulama Hatası",
+          description: `Lütfen tüm izin dönemleri için hem başlangıç hem de bitiş tarihlerini girin.`,
           variant: "destructive",
         });
         return false;
@@ -86,14 +85,13 @@ export default function TimeSpanCalculatorPage() {
     }
 
     setIsLoading(true);
-    setCalculatedServiceTime(null); // Clear previous results
+    setCalculatedServiceTime(null); 
 
-    // Simulate calculation delay for animation effect
     setTimeout(() => {
       const result = calculateNetServiceTime(employmentStartDate, leavePeriods);
       setCalculatedServiceTime(result);
       setIsLoading(false);
-    }, 500); // Adjust delay as needed
+    }, 500);
   };
 
   return (
@@ -101,38 +99,36 @@ export default function TimeSpanCalculatorPage() {
       <Card className="shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
-            TimeSpan Calculator
+            Süre Hesaplayıcı
           </CardTitle>
           <CardDescription className="text-md text-muted-foreground pt-2">
-            Calculate service duration until {format(FIXED_TARGET_DATE, "PPP")}.
+            {format(FIXED_TARGET_DATE, "PPP", { locale: tr })} tarihine kadar hizmet süresini hesaplayın.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
-          {/* Employment Start Date Section */}
           <section aria-labelledby="employment-start-title">
             <h2 id="employment-start-title" className="font-headline text-xl text-primary mb-3">
-              Employment Details
+              İstihdam Detayları
             </h2>
             <DatePickerField
-              label="Employment Start Date"
+              label="İşe Başlangıç Tarihi"
               selectedDate={employmentStartDate}
               onDateChange={setEmploymentStartDate}
               id="employment-start-date"
             />
           </section>
 
-          {/* Leave Periods Section */}
           <section aria-labelledby="leave-periods-title">
             <div className="flex justify-between items-center mb-3">
               <h2 id="leave-periods-title" className="font-headline text-xl text-primary">
-                Leave Periods (Optional)
+                İzin Dönemleri (İsteğe Bağlı)
               </h2>
               <Button variant="outline" size="sm" onClick={handleAddLeavePeriod} disabled={!uuid} className="text-primary border-primary hover:bg-primary/10">
-                <PlusCircle className="mr-2 h-4 w-4" /> Add Leave
+                <PlusCircle className="mr-2 h-4 w-4" /> İzin Ekle
               </Button>
             </div>
             {leavePeriods.length === 0 && (
-              <p className="text-sm text-muted-foreground italic">No leave periods added. Click 'Add Leave' to include any.</p>
+              <p className="text-sm text-muted-foreground italic">Eklenmiş izin dönemi yok. Eklemek için 'İzin Ekle'ye tıklayın.</p>
             )}
             <div className="space-y-4">
               {leavePeriods.map((lp, index) => (
@@ -148,26 +144,24 @@ export default function TimeSpanCalculatorPage() {
             </div>
           </section>
 
-          {/* Action Button */}
           <div className="pt-4">
             <Button
               onClick={handleCalculate}
               disabled={isLoading || !uuid}
               className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
-              aria-label="Calculate service time"
+              aria-label="Hizmet süresini hesapla"
             >
-              {isLoading ? "Calculating..." : "Calculate Service Time"}
+              {isLoading ? "Hesaplanıyor..." : "Hizmet Süresini Hesapla"}
             </Button>
           </div>
 
-          {/* Results Display */}
           {(calculatedServiceTime !== null || isLoading) && (
              <ResultDisplay serviceTime={calculatedServiceTime} isLoading={isLoading} />
           )}
         </CardContent>
       </Card>
       <footer className="text-center mt-12 text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} TimeSpan Calculator. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Süre Hesaplayıcı. Tüm hakları saklıdır.</p>
       </footer>
     </main>
   );

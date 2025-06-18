@@ -28,13 +28,13 @@ export function LeavePeriodInput({
     <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 p-4 border rounded-lg shadow-sm bg-card">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow w-full sm:w-auto">
         <DatePickerField
-          label={`Leave ${index + 1} Start Date`}
+          label={`${index + 1}. İzin Başlangıç Tarihi`}
           selectedDate={leavePeriod.startDate}
           onDateChange={onStartDateChange}
           id={startDateId}
         />
         <DatePickerField
-          label={`Leave ${index + 1} End Date`}
+          label={`${index + 1}. İzin Bitiş Tarihi`}
           selectedDate={leavePeriod.endDate}
           onDateChange={onEndDateChange}
           id={endDateId}
@@ -44,7 +44,7 @@ export function LeavePeriodInput({
         variant="ghost"
         size="icon"
         onClick={onRemove}
-        aria-label={`Remove leave period ${index + 1}`}
+        aria-label={`${index + 1}. izin dönemini kaldır`}
         className="mt-2 sm:mt-0 text-destructive hover:bg-destructive/10"
       >
         <Trash2 className="h-5 w-5" />

@@ -16,7 +16,7 @@ export function ResultDisplay({ serviceTime, isLoading }: ResultDisplayProps) {
   useEffect(() => {
     if (serviceTime !== null && !isLoading) {
       setShouldAnimate(true);
-      const timer = setTimeout(() => setShouldAnimate(false), 500); // Duration of animation
+      const timer = setTimeout(() => setShouldAnimate(false), 500); 
       return () => clearTimeout(timer);
     }
   }, [serviceTime, isLoading]);
@@ -25,7 +25,7 @@ export function ResultDisplay({ serviceTime, isLoading }: ResultDisplayProps) {
     return (
       <Card className="w-full mt-8">
         <CardHeader>
-          <CardTitle className="font-headline text-xl text-primary">Calculating...</CardTitle>
+          <CardTitle className="font-headline text-xl text-primary">Hesaplanıyor...</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -39,25 +39,25 @@ export function ResultDisplay({ serviceTime, isLoading }: ResultDisplayProps) {
   }
 
   if (serviceTime === null) {
-    return null; // Don't display anything if no calculation has been made yet or if reset
+    return null; 
   }
 
   return (
     <Card className={`w-full mt-8 shadow-lg ${shouldAnimate ? 'animate-fade-in' : ''}`}>
       <CardHeader>
-        <CardTitle className="font-headline text-2xl text-primary">Calculated Service Time</CardTitle>
+        <CardTitle className="font-headline text-2xl text-primary">Hesaplanan Hizmet Süresi</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex justify-between items-center text-lg">
-          <span className="font-medium text-foreground/80">Years:</span>
+          <span className="font-medium text-foreground/80">Yıl:</span>
           <span className="font-headline text-primary font-semibold">{serviceTime.years}</span>
         </div>
         <div className="flex justify-between items-center text-lg">
-          <span className="font-medium text-foreground/80">Months:</span>
+          <span className="font-medium text-foreground/80">Ay:</span>
           <span className="font-headline text-primary font-semibold">{serviceTime.months}</span>
         </div>
         <div className="flex justify-between items-center text-lg">
-          <span className="font-medium text-foreground/80">Days:</span>
+          <span className="font-medium text-foreground/80">Gün:</span>
           <span className="font-headline text-primary font-semibold">{serviceTime.days}</span>
         </div>
       </CardContent>
