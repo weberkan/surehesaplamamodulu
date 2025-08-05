@@ -110,34 +110,4 @@
   }
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(10vh) translateX(-2vw) rotate(0deg); /* Start slightly off bottom and add initial sway */
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.7; /* Fade in */
-  }
-  25% {
-    transform: translateY(-25vh) translateX(2vw) rotate(-8deg); /* Sway */
-  }
-  50% {
-    transform: translateY(-55vh) translateX(-2vw) rotate(8deg); /* Sway back */
-  }
-  75% {
-    transform: translateY(-85vh) translateX(1vw) rotate(-5deg);
-  }
-  90% {
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateY(-110vh) translateX(0) rotate(0deg); /* Fly off screen */
-    opacity: 0;
-  }
-}
-
-.animate-float {
-  animation-name: float;
-  animation-timing-function: ease-in-out; /* Smoother animation */
-  animation-fill-mode: forwards; 
-}
+    
