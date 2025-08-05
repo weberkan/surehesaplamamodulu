@@ -9,10 +9,11 @@ import { DatePickerField } from "@/components/date-picker-field";
 import { LeavePeriodInput } from "@/components/leave-period-input";
 import { ResultDisplay } from "@/components/result-display";
 import { FloatingBalloons } from "@/components/floating-balloons";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   calculateNetServiceTime,
   calculateTotalLeaveDuration,
-  FIXED_TARGET_DATE,
   type LeavePeriodData,
   type ServiceTime
 } from "@/lib/time-calculation";
@@ -21,8 +22,12 @@ import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 
+const INITIAL_TARGET_DATE = new Date(2025, 5, 30); // June 30, 2025
+
 export default function TimeSpanCalculatorPage() {
   const [employmentStartDate, setEmploymentStartDate] = useState<Date | undefined>();
+  const [targetDate, setTargetDate] = useState<Date | undefined>(INITIAL_TARGET_DATE);
+  const [isTargetDateFixed, setIsTargetDateFixed] = useState(true);
   const [leavePeriods, setLeavePeriods] = useState<LeavePeriodData[]>([]);
   const [calculatedServiceTime, setCalculatedServiceTime] = useState<ServiceTime | null>(null);
   const [totalLeaveDuration, setTotalLeaveDuration] = useState<ServiceTime | null>(null);
@@ -69,6 +74,22 @@ export default function TimeSpanCalculatorPage() {
       });
       return false;
     }
+    if (!targetDate) {
+      toast({
+        title: "Doğrulama Hatası",
+        description: "Lütfen hesaplama tarihini seçin.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (employmentStartDate > targetDate) {
+       toast({
+        title: "Doğrulama Hatası",
+        description: "Hesaplama tarihi işe başlangıç tarihinden önce olamaz.",
+        variant: "destructive",
+      });
+      return false;
+    }
 
     for (const lp of leavePeriods) {
       if (lp.startDate && lp.endDate && lp.startDate > lp.endDate) {
@@ -106,10 +127,10 @@ export default function TimeSpanCalculatorPage() {
 
     // Simulate calculation delay
     setTimeout(() => {
-      const result = calculateNetServiceTime(employmentStartDate!, leavePeriods);
+      const result = calculateNetServiceTime(employmentStartDate!, targetDate!, leavePeriods);
       setCalculatedServiceTime(result);
 
-      const totalLeaves = calculateTotalLeaveDuration(leavePeriods);
+      const totalLeaves = calculateTotalLeaveDuration(leavePeriods, employmentStartDate!, targetDate!);
       setTotalLeaveDuration(totalLeaves);
 
       setIsLoading(false);
@@ -125,20 +146,42 @@ export default function TimeSpanCalculatorPage() {
             Personel Hareketleri Şube Müdürlüğü
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground pt-2">
-            {format(FIXED_TARGET_DATE, "PPP", { locale: tr })} tarihine kadar hizmet süresini hesaplayın.
+            Hizmet süresini ve kullanılan izinleri kolayca hesaplayın.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
           <section aria-labelledby="employment-start-title">
             <h2 id="employment-start-title" className="font-headline text-xl text-primary mb-3">
-              İstihdam Detayları
+              Hesaplama Detayları
             </h2>
-            <DatePickerField
-              label="İşe Başlangıç Tarihi"
-              selectedDate={employmentStartDate}
-              onDateChange={setEmploymentStartDate}
-              id="employment-start-date"
-            />
+            <div className="space-y-4">
+              <DatePickerField
+                label="İşe Başlangıç Tarihi"
+                selectedDate={employmentStartDate}
+                onDateChange={setEmploymentStartDate}
+                id="employment-start-date"
+              />
+              <div className="flex items-end gap-4">
+                <div className="flex-grow">
+                  <DatePickerField
+                    label="Hesaplama Tarihi"
+                    selectedDate={targetDate}
+                    onDateChange={setTargetDate}
+                    id="target-date"
+                    disabled={isTargetDateFixed}
+                  />
+                </div>
+                <div className="flex items-center space-x-2 pb-1">
+                  <Switch
+                    id="fix-date-switch"
+                    checked={isTargetDateFixed}
+                    onCheckedChange={setIsTargetDateFixed}
+                    aria-label="Hesaplama tarihini sabitle"
+                  />
+                  <Label htmlFor="fix-date-switch">Sabitle</Label>
+                </div>
+              </div>
+            </div>
           </section>
 
           <section aria-labelledby="leave-periods-title">
