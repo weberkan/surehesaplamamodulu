@@ -65,49 +65,39 @@ export function calculateNetServiceTime(
     mergedLeavePeriods.push(currentMerge);
   }
 
-  let totalWorkedDays = 0;
-  let effectiveCurrentDate = new Date(employmentStartDate); 
-
-  for (const leave of mergedLeavePeriods) {
-    // Determine the effective start and end of the leave within the employment period.
-    const leaveStartEffective = max([leave.startDate, employmentStartDate]);
-    const leaveEndEffective = min([leave.endDate, targetDate]);
-
-    // Calculate worked days from the last point up to the start of this leave.
-    if (effectiveCurrentDate < leaveStartEffective) {
-      const workSegmentEnd = min([addDays(leaveStartEffective, -1), targetDate]);
-      if (effectiveCurrentDate <= workSegmentEnd) {
-         totalWorkedDays += differenceInCalendarDays(workSegmentEnd, effectiveCurrentDate) + 1;
-      }
-    }
-    
-    // Move the 'current date' cursor past this leave period.
-    if (effectiveCurrentDate <= leaveEndEffective) {
-      effectiveCurrentDate = addDays(leaveEndEffective, 1);
-    }
+  let totalLeaveDays = 0;
+  for (const period of mergedLeavePeriods) {
+     const leaveStartEffective = max([period.startDate, employmentStartDate]);
+     const leaveEndEffective = min([period.endDate, targetDate]);
+     if(leaveStartEffective <= leaveEndEffective) {
+        totalLeaveDays += differenceInCalendarDays(leaveEndEffective, leaveStartEffective);
+     }
   }
 
-  // Calculate any remaining worked days after the last leave period.
-  if (effectiveCurrentDate <= targetDate) {
-    totalWorkedDays += differenceInCalendarDays(targetDate, effectiveCurrentDate) + 1;
-  }
-  
-  return daysToServiceTime(Math.max(0, totalWorkedDays));
+  const grossDays = differenceInCalendarDays(targetDate, employmentStartDate);
+  const netDays = grossDays - totalLeaveDays;
+
+  return daysToServiceTime(Math.max(0, netDays));
 }
+
 
 export function calculateTotalLeaveDuration(
   leavePeriodsInput: LeavePeriodData[] = [],
   employmentStartDate?: Date,
   targetDate?: Date
 ): ServiceTime | null {
+  if (!employmentStartDate || !targetDate) {
+    return null;
+  }
+  
   const validLeavePeriods = leavePeriodsInput
     .filter(lp => lp.startDate && lp.endDate && lp.startDate <= lp.endDate)
     // Only consider leaves that fall at least partially within the employment period.
-    .filter(lp => employmentStartDate && targetDate && lp.endDate! >= employmentStartDate && lp.startDate! <= targetDate)
+    .filter(lp => lp.endDate! >= employmentStartDate && lp.startDate! <= targetDate)
     .map(lp => ({ 
         // Clamp leave dates to be within the employment period.
-        startDate: max([new Date(lp.startDate!), employmentStartDate!]), 
-        endDate: min([new Date(lp.endDate!), targetDate!])
+        startDate: max([new Date(lp.startDate!), employmentStartDate]), 
+        endDate: min([new Date(lp.endDate!), targetDate])
     }))
     .sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
 
@@ -117,22 +107,27 @@ export function calculateTotalLeaveDuration(
   
   // Merge overlapping periods to count days correctly.
   const mergedLeavePeriods: Array<{ startDate: Date, endDate: Date }> = [];
-  let currentMerge = { ...validLeavePeriods[0] };
+  if (validLeavePeriods.length > 0) {
+    let currentMerge = { ...validLeavePeriods[0] };
 
-  for (let i = 1; i < validLeavePeriods.length; i++) {
-    const nextLeave = validLeavePeriods[i];
-    if (nextLeave.startDate <= addDays(currentMerge.endDate, 1)) {
-      currentMerge.endDate = max([currentMerge.endDate, nextLeave.endDate]);
-    } else {
-      mergedLeavePeriods.push(currentMerge);
-      currentMerge = { ...nextLeave };
+    for (let i = 1; i < validLeavePeriods.length; i++) {
+        const nextLeave = validLeavePeriods[i];
+        if (nextLeave.startDate <= addDays(currentMerge.endDate, 1)) {
+        currentMerge.endDate = max([currentMerge.endDate, nextLeave.endDate]);
+        } else {
+        mergedLeavePeriods.push(currentMerge);
+        currentMerge = { ...nextLeave };
+        }
     }
+    mergedLeavePeriods.push(currentMerge);
   }
-  mergedLeavePeriods.push(currentMerge);
+
 
   let totalLeaveDays = 0;
   for (const period of mergedLeavePeriods) {
-    totalLeaveDays += differenceInCalendarDays(period.endDate, period.startDate) + 1;
+     if (period.startDate <= period.endDate) {
+        totalLeaveDays += differenceInCalendarDays(period.endDate, period.startDate);
+     }
   }
 
   if (totalLeaveDays <= 0) {

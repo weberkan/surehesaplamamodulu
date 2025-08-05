@@ -17,16 +17,13 @@ import {
   type ServiceTime
 } from "@/lib/time-calculation";
 import { PlusCircle } from "lucide-react";
-import { format } from "date-fns";
-import { tr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 
-const INITIAL_TARGET_DATE = new Date(2025, 5, 30); // June 30, 2025
 
 export default function TimeSpanCalculatorPage() {
   const [employmentStartDate, setEmploymentStartDate] = useState<Date | undefined>();
-  const [targetDate, setTargetDate] = useState<Date | undefined>(INITIAL_TARGET_DATE);
-  const [isTargetDateFixed, setIsTargetDateFixed] = useState(true);
+  const [targetDate, setTargetDate] = useState<Date | undefined>();
+  const [isTargetDateFixed, setIsTargetDateFixed] = useState(false);
   const [leavePeriods, setLeavePeriods] = useState<LeavePeriodData[]>([]);
   const [calculatedServiceTime, setCalculatedServiceTime] = useState<ServiceTime | null>(null);
   const [totalLeaveDuration, setTotalLeaveDuration] = useState<ServiceTime | null>(null);
@@ -237,5 +234,3 @@ export default function TimeSpanCalculatorPage() {
     </main>
   );
 }
-
-    
